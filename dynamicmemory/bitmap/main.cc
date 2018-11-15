@@ -62,7 +62,7 @@ public:
 			{
 				s<< b.p[b.w*row+col] << ' ';
 			}
-			s<<row<<'\n';
+			s<<'\n';
 		}
 		return s;
 	}
@@ -138,7 +138,7 @@ public:
      	}
      	else {
      		uint32_t tempx = x0;
-     		for (uint32_t y = y0; y > y1; --y)
+     		for (uint32_t y = y0; y >= y1; --y)
      		{
      			p[w*y+tempx]=c.getChar();
      			error+=1/m;
@@ -156,6 +156,19 @@ public:
      	}
      	
      }
+     void ellipse(uint32_t x, uint32_t y, uint32_t wid, uint32_t hi, Color c){
+     	uint32_t sR=0, oldSR=0;
+    	uint32_t h_2=hi*hi;
+    	uint32_t w_2=wid*wid;
+    	x=x-wid;
+    	y=y-wid+1;
+   		for (uint32_t  i = 1; i <= 2 * wid; i++) {
+      		sR = sqrt (h_2 - (((h_2 * (wid - i)) * (wid - i)) / w_2));
+ 		 	line(i-1+x,hi+oldSR+y,i+x,hi+sR+y,c);
+ 		 	line(i-1+x,hi-oldSR+y,i+x,hi-sR+y,c);
+        	oldSR=sR;
+     	}
+ 	}
 };
 int main() {
 	Color RED(255,0,0); // all red, no green, no blue (fully opaque)
@@ -165,49 +178,16 @@ int main() {
 	Color BLUE(0,0,255);
 
 	Bitmap b(30,20); // 30 pixels across, 20 pixels high, each pixel RGBA
-	for (int i = 0; i < 3; ++i)
-	{
-		for (int i = 0; i < 10; ++i)
-		{
-			cout << i << " ";
-		}
-
-	}
-	cout << endl;
 	b.horizLine(0, 20, 19, GREEN); // from x=0 to x=20 at y=19
 	b.vertLine(5, 0,19, GREEN); // from y = 0 to y=19 at x = 5
 	b.drawRect(0,0, 5, 8,WHITE); // x = 0, y =0 w=5, h=8
 	b.fillRect(10,10, 4, 3,BLACK); // x = 10, y =10 w=4, h=3
 	b.line(0,0, 19,5, RED);
-	b.line(15,15,24,0,BLUE);
+	b.line(15,15,24,1,BLUE);//Bresenham algorithm
+	//https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+	b.ellipse(15,10, 6, 5, RED);    // ellipse centered at (15,10) w= 6, h=5
 	cout << b;
 	// top left pixel = (0,0)
-
-	
-	#if 0
-	b.line(0,0,   19,19, RED);
-	b.line(0,5,   29,10, BLUE); //Bresenham algorithm
-	//https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-
-	// https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
-	//TODO: b.line(0,100, 100,50, BLUE); //Wu algorithm
-	
-
-  b.ellipse(15,0, 8, 5, RED);    // ellipse centered at (15,0) w= 8, h=5
-	cout << b;
-	/*
-R
- R
-  R
-   R
-    R
-BBB
-   BBBBB
-        BBBBBB
-
-
-	 */
-#endif
 	return 0;
 }
 
