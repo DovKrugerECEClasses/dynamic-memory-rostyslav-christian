@@ -14,8 +14,8 @@ using namespace std;
 
 int main(){
 	const Fraction a(1,2);
-	const Fraction b(12);
-	const Fraction c(3);
+	const Fraction b(12,1);
+	const Fraction c(3,1);
 	const Fraction d(1,3);
 	const Fraction e(1,6);
 	Fraction s=a;
