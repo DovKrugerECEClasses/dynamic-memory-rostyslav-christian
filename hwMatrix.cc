@@ -1,3 +1,11 @@
+/*
+HW: Create a class for Matrices
+Author: Christian Jensen
+Cite: RV
+
+Pledge: I pledge my honor that I have abided by the Stevens Honor System
+*/
+
 #include <iostream>
 using namespace std;
 
@@ -8,19 +16,19 @@ class Matrix {
 private:
 	uint32_t rows,cols;
 	double* m;
-  Matrix(uint32_t rows, uint32_t cols) : rows(rows), cols(cols),
-																				 m(         ) {		//TODO:
-	}
+  	Matrix(uint32_t rows, uint32_t cols) : rows(rows), cols(cols), m(new double[rows*cols]){
+       
+  }
 public:
-  Matrix(uint32_t rows, uint32_t cols, double v) : Matrix(rows,cols) {
+  	Matrix(uint32_t rows, uint32_t cols, double v) : Matrix(rows,cols) {
 		for (uint32_t i = 0; i < rows*cols; i++) {
 			m[i] = v;
 		}
 	}
-	Matrix(const Matrix& orig) : rows(orig.rows), cols(orig.cols),
-															 m(      ) {
-		//TODO:
-		
+	Matrix(const Matrix& orig) : rows(orig.rows), cols(orig.cols), m(new double[rows*cols]){
+		for (uint32_t i = 0; i < rows*cols; i++) {
+			m[i] = orig.m[i];
+		}
 	}
 
 	// add move constructor for 20% bonus
@@ -40,20 +48,47 @@ public:
 	//C++ order in memory for static-sized arrays
 	// int x[5][2]; // x[0][0] x[0][1] x[1][0] x[1][1] ....
 	
-  double operator()(uint32_t r, uint32_t c) const {
+  	double operator()(uint32_t r, uint32_t c) const {
+		return m[r * cols + c];
+	}
+  	double& operator()(uint32_t r, uint32_t c) { 
 		return m[r * cols + c ];
 	}
-  double& operator()(uint32_t r, uint32_t c) { 
+	#if 0
+	double operator[](uint32_t r, uint32_t c) const {
+		return m[r * cols + c];
+	}
+  	double& operator[](uint32_t r, uint32_t c) { 
 		return m[r * cols + c ];
 	}
+	#endif
 
 	friend  Matrix operator +(const Matrix& a, const Matrix& b) {
 		if (a.rows != b.rows || a.cols != b.cols)
 			throw IllegalSize();
 		Matrix ans(a.rows, a.cols);
-
-		//TODO:
-
+		for (uint32_t i = 0; i < a.rows*a.cols; ++i)
+		{
+			ans.m[i]=a.m[i]+b.m[i];
+		}
+		return ans;
+	}
+	friend  Matrix operator -(const Matrix& a, const Matrix& b) {
+		if (a.rows != b.rows || a.cols != b.cols)
+			throw IllegalSize();
+		Matrix ans(a.rows, a.cols);
+		for (uint32_t i = 0; i < a.rows*a.cols; ++i)
+		{
+			ans.m[i]=a.m[i]-b.m[i];
+		}
+		return ans;
+	}
+	friend  Matrix operator *(const double& c, const Matrix& m) {
+		Matrix ans(m.rows, m.cols);
+		for (uint32_t i = 0; i < m.rows*m.cols; ++i)
+		{
+			ans.m[i]=c*m.m[i];
+		}
 		return ans;
 	}
 
@@ -66,8 +101,8 @@ public:
 				double dot = 0;
 				for (uint32_t k = 0; k < a.cols; k++)
 					// linearize so this is about 30% faster
-					dot += a(i,k) * b(k,j); //TODO: replace (i,j) by indexing
-				ans(i,j) = dot; //TODO: make this faster
+					dot += a.m[i*a.cols+k] * b.m[k*b.cols+j];
+				ans.m[i*ans.cols+j] = dot;
 			}
 
 		return ans;
@@ -87,9 +122,9 @@ public:
 int main() {
 	try {
 		Matrix a(4, 3, 0.0);
-		cout << a(2,2);
+		cout << a(2,2) << endl;
 		a(2,2) = 1.5;
-		a[2][1] = 2.5;
+		//a[2][1] = 2.5;
 		Matrix b(4, 3, 0.0);
 		b(1,2) = 1.2;
 		b(0,0) = -1.1;
