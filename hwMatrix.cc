@@ -45,6 +45,11 @@ public:
 		delete [] m;
 	}
 
+	//Move Constructor
+	Matrix(Matrix&& orig): rows(orig.rows), cols(orig.cols), m(orig.m){
+		orig.m=nullptr;
+	}
+
 	//C++ order in memory for static-sized arrays
 	// int x[5][2]; // x[0][0] x[0][1] x[1][0] x[1][1] ....
 	
@@ -53,6 +58,12 @@ public:
 	}
   	double& operator()(uint32_t r, uint32_t c) { 
 		return m[r * cols + c ];
+	}
+	const double* operator[](uint32_t n) const {
+		return &m[n];
+	}
+  	double* operator[](uint32_t n) { 
+		return &m[n];
 	}
 	#if 0
 	double operator[](uint32_t r, uint32_t c) const {
@@ -124,7 +135,7 @@ int main() {
 		Matrix a(4, 3, 0.0);
 		cout << a(2,2) << endl;
 		a(2,2) = 1.5;
-		//a[2][1] = 2.5;
+		a[2][1] = 2.5;
 		Matrix b(4, 3, 0.0);
 		b(1,2) = 1.2;
 		b(0,0) = -1.1;
